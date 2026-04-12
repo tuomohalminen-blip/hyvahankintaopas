@@ -127,7 +127,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-8">
-              <div className="relative w-full" style={{ aspectRatio: "16/9", maxHeight: 340 }}>
+              <div className="relative w-full h-[300px]">
                 <Image
                   src="/pictures/kaavio-kustannusennuste.png"
                   alt="Kela- ja VPL-kyytien kustannusennuste: nykyinen vs. tehokas malli"

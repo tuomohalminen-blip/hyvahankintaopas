@@ -220,31 +220,13 @@ export default async function ArticlePage({
             {article.meta.title}
           </h1>
 
-          <p className="text-lg text-[#6b7280] mb-8">{article.meta.description}</p>
+          <p className="text-lg font-medium text-[#004D46] border-l-4 border-[#004D46] pl-4 mb-8 leading-relaxed bg-[#E0F2F1] py-3 pr-3 rounded-r-lg">{article.meta.description}</p>
 
           {renderContent(article.content)}
         </article>
 
         {/* Sidebar */}
         <aside className="w-full lg:w-64 flex-shrink-0 space-y-6">
-          {/* Kirjoittaja */}
-          <div className="rounded-lg border border-gray-200 bg-white p-4">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-full overflow-hidden relative">
-                <Image
-                  src="/pictures/tuomo-halminen.jpg"
-                  alt="Tuomo Halminen"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-900">Tuomo Halminen</p>
-                <p className="text-xs text-[#6b7280]">Toimitusjohtaja, Menevä Oy</p>
-              </div>
-            </div>
-          </div>
-
           {/* Jaa */}
           <div className="rounded-lg border border-gray-200 bg-white p-4">
             <ShareButtons
