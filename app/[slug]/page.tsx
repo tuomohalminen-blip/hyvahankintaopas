@@ -151,9 +151,7 @@ function renderContent(content: string) {
       const [, alt, src] = imgMatch
       elements.push(
         <figure key={key++} className="my-6">
-          <div className="relative w-full" style={{ aspectRatio: "16/9" }}>
-            <Image src={src} alt={alt} fill className="object-contain" />
-          </div>
+          <Image src={src} alt={alt} width={1200} height={900} className="w-full h-auto rounded" />
           {alt && <figcaption className="mt-2 text-sm text-center text-[#6b7280]">{alt}</figcaption>}
         </figure>
       )
