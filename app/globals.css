@@ -1,26 +1,71 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-brand: #004D46;
+  --color-brand-light: #006B5E;
+  --color-brand-bg: #f0fdf4;
+  --color-brand-border: #047857;
+  --color-opinion-bg: #fffbeb;
+  --color-opinion-border: #d97706;
+  --color-fact-bg: #eff6ff;
+  --color-fact-border: #2563eb;
+  --color-background: #fafafa;
+  --color-foreground: #1a1a1a;
+  --color-muted: #6b7280;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
+
+/* Article prose styles */
+.prose h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-brand);
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose p {
+  font-size: 1rem;
+  line-height: 1.75;
+  margin-bottom: 1rem;
+}
+
+.prose ul, .prose ol {
+  margin: 0.5rem 0 1rem 1.25rem;
+  line-height: 1.75;
+}
+
+.prose li {
+  margin-bottom: 0.25rem;
+}
+
+.prose strong {
+  font-weight: 700;
+}
+
+.prose a {
+  color: var(--color-brand-light);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose a:hover {
+  color: var(--color-brand);
+}
+
+/* Reading progress bar */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: var(--color-brand);
+  z-index: 9999;
+  transition: width 50ms;
 }
