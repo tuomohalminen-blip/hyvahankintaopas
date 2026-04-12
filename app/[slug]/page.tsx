@@ -13,16 +13,15 @@ export function generateStaticParams() {
   return articles.map((a) => ({ slug: a.meta.slug }))
 }
 
-// Poistaa ensimmäisen kappaleen jos se toistaa ingressin
-function removeLeadingRepeat(content: string, description: string): string {
-  const trimmed = content.trimStart()
-  const descStart = description.slice(0, 40).toLowerCase()
-  const contentStart = trimmed.slice(0, 40).toLowerCase()
-  if (contentStart.includes(descStart.slice(0, 30))) {
-    const firstBreak = trimmed.indexOf("\n\n")
-    if (firstBreak !== -1) return trimmed.slice(firstBreak + 2)
-  }
-  return content
+// Poistaa intro-kappaleen joka on # otsikon ja ensimmäisen ## väliotsikon välissä
+function removeLeadingRepeat(content: string, _description: string): string {
+  const lines = content.split("\n")
+  const firstH2 = lines.findIndex((l) => l.startsWith("## "))
+  if (firstH2 === -1) return content
+  // Poista kaikki rivit ennen ensimmäistä ## jotka eivät ole # otsikko
+  const before = lines.slice(0, firstH2).filter((l) => l.startsWith("# "))
+  const after = lines.slice(firstH2)
+  return [...before, ...after].join("\n")
 }
 
 // Simple MDX-like renderer: converts markdown content to React elements
