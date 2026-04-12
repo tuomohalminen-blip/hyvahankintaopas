@@ -7,6 +7,7 @@ import ShareButtons from "@/app/components/ShareButtons"
 import TakeawayBox from "@/app/components/TakeawayBox"
 import OpinionNote from "@/app/components/OpinionNote"
 import FactBox from "@/app/components/FactBox"
+import DownloadButton from "@/app/components/DownloadButton"
 
 export function generateStaticParams() {
   const articles = getAllArticles()
@@ -95,6 +96,15 @@ function renderContent(content: string) {
           {textLines.join(" ")}
         </FactBox>
       )
+      continue
+    }
+
+    // DownloadButton component: <DownloadButton href="..." label="..." type="pdf" />
+    const dlMatch = line.trim().match(/^<DownloadButton\s+href="([^"]+)"\s+label="([^"]+)"(?:\s+type="([^"]+)")?\s*\/>$/)
+    if (dlMatch) {
+      const [, href, label, type] = dlMatch
+      elements.push(<DownloadButton key={key++} href={href} label={label} type={type} />)
+      i++
       continue
     }
 
