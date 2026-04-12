@@ -74,8 +74,40 @@ function renderContent(content: string) {
         i++
       }
       i++
+      const hasMixed = textLines.some((l) => l.startsWith("- ")) && textLines.some((l) => !l.startsWith("- "))
+      const isListOnly = textLines.every((l) => l.startsWith("- "))
       elements.push(
-        <OpinionNote key={key++}>{textLines.join(" ")}</OpinionNote>
+        <OpinionNote key={key++}>
+          {hasMixed ? (
+            <div>
+              {(() => {
+                const nodes: React.ReactNode[] = []
+                let items: string[] = []
+                let k = 0
+                const flush = () => {
+                  if (items.length) {
+                    nodes.push(<ul key={k++} className="list-disc pl-4 space-y-1 mb-2">{items.map((it, j) => <li key={j}>{it}</li>)}</ul>)
+                    items = []
+                  }
+                }
+                for (const tl of textLines) {
+                  if (tl.startsWith("- ")) {
+                    items.push(tl.slice(2))
+                  } else {
+                    flush()
+                    nodes.push(<p key={k++} className="font-bold mt-2 mb-1" dangerouslySetInnerHTML={{ __html: formatInline(tl) }} />)
+                  }
+                }
+                flush()
+                return nodes
+              })()}
+            </div>
+          ) : isListOnly ? (
+            <ul className="list-disc pl-4 space-y-1">
+              {textLines.map((l, j) => <li key={j}>{l.slice(2)}</li>)}
+            </ul>
+          ) : textLines.join(" ")}
+        </OpinionNote>
       )
       continue
     }
@@ -91,9 +123,14 @@ function renderContent(content: string) {
         i++
       }
       i++
+      const isListFact = textLines.every((l) => l.startsWith("- "))
       elements.push(
         <FactBox key={key++} title={title}>
-          {textLines.join(" ")}
+          {isListFact ? (
+            <ul className="list-disc pl-4 space-y-1">
+              {textLines.map((l, j) => <li key={j}>{l.slice(2)}</li>)}
+            </ul>
+          ) : textLines.join(" ")}
         </FactBox>
       )
       continue
