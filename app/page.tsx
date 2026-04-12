@@ -135,7 +135,7 @@ export default function Home() {
                   className="object-contain"
                 />
               </div>
-              <p className="mt-3 text-sm text-muted">
+              <p className="mt-3 text-sm text-muted text-center">
                 Kustannusero nykyisen ja tehokkaan mallin välillä on yli 100 miljoonaa euroa vuodessa.
               </p>
             </div>
