@@ -13,7 +13,7 @@ export default function ShareButtons({
   return (
     <div className="my-6">
       <p className="text-sm font-bold text-gray-700 mb-2">Jaa artikkeli</p>
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2">
         {/* LinkedIn */}
         <a
           href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
