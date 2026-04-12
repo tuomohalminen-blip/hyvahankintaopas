@@ -29,7 +29,7 @@ export default function TietoaPage() {
         <div className="mt-6 space-y-4 text-muted leading-relaxed">
           <p>
             Olen hengittänyt taksialaa koko viisikymmenvuotisen elämäni. Isäni
-            Anssi Halminen aloitti taksikuskin 1970-luvulla ja perusti Helsingin
+            Anssi aloitti taksiautoilijana 1970-luvulla ja perusti Helsingin
             Taksipalvelu Oy:n vuonna 1982. Tänään johdan Menevä Oy:tä, Suomen
             liikevaihdoltaan suurinta taksiyhtiötä, jonka liikevaihto on noin 50
             miljoonaa euroa vuodessa.

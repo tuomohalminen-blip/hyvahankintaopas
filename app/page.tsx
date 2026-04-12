@@ -168,7 +168,7 @@ export default function Home() {
               </h2>
               <p className="mt-3 text-muted leading-relaxed max-w-2xl">
                 Olen hengittänyt taksialaa koko viisikymmenvuotisen elämäni.
-                Isäni Anssi Halminen aloitti taksikuskin 1970-luvulla ja perusti
+                Isäni Anssi aloitti taksiautoilijana 1970-luvulla ja perusti
                 Helsingin Taksipalvelu Oy:n vuonna 1982. Tänään johdan Menevä
                 Oy:tä, Suomen liikevaihdoltaan suurinta taksiyhtiötä.
               </p>
