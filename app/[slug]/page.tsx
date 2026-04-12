@@ -13,6 +13,18 @@ export function generateStaticParams() {
   return articles.map((a) => ({ slug: a.meta.slug }))
 }
 
+// Poistaa ensimmäisen kappaleen jos se toistaa ingressin
+function removeLeadingRepeat(content: string, description: string): string {
+  const trimmed = content.trimStart()
+  const descStart = description.slice(0, 40).toLowerCase()
+  const contentStart = trimmed.slice(0, 40).toLowerCase()
+  if (contentStart.includes(descStart.slice(0, 30))) {
+    const firstBreak = trimmed.indexOf("\n\n")
+    if (firstBreak !== -1) return trimmed.slice(firstBreak + 2)
+  }
+  return content
+}
+
 // Simple MDX-like renderer: converts markdown content to React elements
 function renderContent(content: string) {
   const lines = content.split("\n")
@@ -222,7 +234,7 @@ export default async function ArticlePage({
 
           <p className="text-lg font-medium text-[#004D46] border-l-4 border-[#004D46] pl-4 mb-8 leading-relaxed bg-[#E0F2F1] py-3 pr-3 rounded-r-lg">{article.meta.description}</p>
 
-          {renderContent(article.content)}
+          {renderContent(removeLeadingRepeat(article.content, article.meta.description))}
         </article>
 
         {/* Sidebar */}
