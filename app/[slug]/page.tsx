@@ -123,14 +123,34 @@ function renderContent(content: string) {
         i++
       }
       i++
-      const isListFact = textLines.every((l) => l.startsWith("- "))
+      const renderFactLines = () => {
+        const nodes: React.ReactNode[] = []
+        let listItems: string[] = []
+        let k = 0
+        const flushList = () => {
+          if (listItems.length) {
+            nodes.push(<ul key={k++} className="list-disc pl-4 space-y-1 mb-2">{listItems.map((it, j) => <li key={j}>{it}</li>)}</ul>)
+            listItems = []
+          }
+        }
+        for (const tl of textLines) {
+          const imgM = tl.match(/^!\[([^\]]*)\]\(([^)]+)\)$/)
+          if (imgM) {
+            flushList()
+            nodes.push(<figure key={k++} className="my-3"><Image src={imgM[2]} alt={imgM[1]} width={1200} height={900} className="w-full h-auto rounded" />{imgM[1] && <figcaption className="mt-1 text-xs text-center text-[#6b7280]">{imgM[1]}</figcaption>}</figure>)
+          } else if (tl.startsWith("- ")) {
+            listItems.push(tl.slice(2))
+          } else {
+            flushList()
+            nodes.push(<p key={k++} className="mb-2" dangerouslySetInnerHTML={{ __html: formatInline(tl) }} />)
+          }
+        }
+        flushList()
+        return nodes
+      }
       elements.push(
         <FactBox key={key++} title={title}>
-          {isListFact ? (
-            <ul className="list-disc pl-4 space-y-1">
-              {textLines.map((l, j) => <li key={j}>{l.slice(2)}</li>)}
-            </ul>
-          ) : textLines.join(" ")}
+          <div>{renderFactLines()}</div>
         </FactBox>
       )
       continue
