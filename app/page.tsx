@@ -1,6 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import ChapterNav from "@/app/components/ChapterNav"
+import AskHeroButton from "@/app/components/AskHeroButton"
 
 export default function Home() {
   return (
@@ -36,7 +37,11 @@ export default function Home() {
             >
               Tietoa oppaasta
             </Link>
+            <AskHeroButton />
           </div>
+          <p className="mt-3 text-sm text-white/60">
+            Tekoälyavustaja vastaa oppaan sisällön pohjalta – ei yleisneuvoja, vaan alan asiantuntemus
+          </p>
         </div>
       </section>
 

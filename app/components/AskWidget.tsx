@@ -18,6 +18,12 @@ export default function AskWidget() {
     if (open) bottomRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages, open])
 
+  useEffect(() => {
+    const handler = () => setOpen(true)
+    document.addEventListener("open-ask-widget", handler)
+    return () => document.removeEventListener("open-ask-widget", handler)
+  }, [])
+
   async function send() {
     const q = input.trim()
     if (!q || loading) return
