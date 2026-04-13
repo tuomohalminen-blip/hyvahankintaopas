@@ -9,9 +9,11 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.88.0",
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
     "@next/mdx": "^16.2.3",
+    "@upstash/redis": "^1.37.0",
     "gray-matter": "^4.0.3",
     "next": "16.2.3",
     "react": "19.2.4",
