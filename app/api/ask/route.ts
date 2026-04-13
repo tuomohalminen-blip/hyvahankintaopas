@@ -5,7 +5,7 @@ import fs from "fs"
 import path from "path"
 import matter from "gray-matter"
 
-const DAILY_LIMIT = 10
+const DAILY_LIMIT = 30
 
 function getClientIp(req: NextRequest): string {
   return (
