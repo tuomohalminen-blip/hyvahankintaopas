@@ -114,10 +114,25 @@ export default function AskWidget() {
                     className={
                       m.role === "user"
                         ? "bg-[#004D46] text-white rounded-2xl rounded-tr-sm px-4 py-3 max-w-[80%] whitespace-pre-wrap"
-                        : "bg-[#E0F2F1] text-[#004D46] rounded-2xl rounded-tl-sm px-4 py-3 max-w-[80%] whitespace-pre-wrap leading-relaxed"
+                        : "bg-[#E0F2F1] text-[#004D46] rounded-2xl rounded-tl-sm px-4 py-3 max-w-[80%] leading-relaxed"
                     }
                   >
-                    {m.text}
+                    {m.role === "assistant"
+                      ? m.text.split("\n").map((line, li) => {
+                          const linkMatch = line.match(/^- \[(.+?)\]\((.+?)\)$/)
+                          if (linkMatch) {
+                            return (
+                              <div key={li}>
+                                {"- "}
+                                <a href={linkMatch[2]} className="underline font-medium hover:opacity-75" onClick={() => setOpen(false)}>
+                                  {linkMatch[1]}
+                                </a>
+                              </div>
+                            )
+                          }
+                          return <div key={li} className={line === "" ? "h-2" : ""}>{line}</div>
+                        })
+                      : m.text}
                   </div>
                 </div>
               ))}

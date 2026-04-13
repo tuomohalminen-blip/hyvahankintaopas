@@ -33,7 +33,7 @@ function loadAllContent(): string {
     for (const file of files) {
       const raw = fs.readFileSync(path.join(contentDir, ch, file), "utf-8")
       const { data, content } = matter(raw)
-      parts.push(`## ${data.title}\n${content}`)
+      parts.push(`## ${data.title}\nURL: /${data.slug}\n${content}`)
     }
   }
   return parts.join("\n\n---\n\n")
@@ -43,7 +43,15 @@ const SYSTEM_PROMPT = `Olet Hyvä hankintaopas -sivuston avustaja. Sivusto on ta
 
 Vastauksesi perustuvat YKSINOMAAN alla olevaan oppaan sisältöön. Et vastaa muihin kysymyksiin. Jos kysymys ei liity oppaan aiheisiin (taksialan julkiset hankinnat, kilpailutus, hankintamallit, kuljetuspalvelut), sano lyhyesti: "Tämä kysymys ei kuulu oppaan aihepiiriin. Voin auttaa taksialan julkisiin hankintoihin liittyvissä kysymyksissä."
 
-Pidä vastaukset tiiviinä (max 200 sanaa). Viittaa oppaan lukuihin kun mahdollista. Kirjoita suomeksi.`
+Pidä vastaukset tiiviinä (max 200 sanaa). Kirjoita suomeksi.
+
+TÄRKEÄÄ: Päätä AINA vastauksesi osioon "Lue lisää:" jossa listaat ne artikkelit joiden sisällöstä vastauksesi on rakennettu. Muoto:
+
+Lue lisää:
+- [Artikkelin otsikko](/slug)
+- [Artikkelin otsikko](/slug)
+
+Käytä täsmälleen oppaan sisällössä annettuja URL-osoitteita (muoto: /slug).`
 
 export async function POST(req: NextRequest) {
   try {
