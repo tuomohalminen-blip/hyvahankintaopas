@@ -132,18 +132,20 @@ export default function AskWidget() {
                   >
                     {m.role === "assistant"
                       ? m.text.split("\n").map((line, li) => {
+                          if (line.startsWith("### ")) return <h4 key={li} className="font-bold mt-2 mb-1">{line.slice(4)}</h4>
+                          if (line.startsWith("## ")) return <h3 key={li} className="font-bold text-base mt-3 mb-1">{line.slice(3)}</h3>
+                          if (line.startsWith("# ")) return <h2 key={li} className="font-bold text-lg mt-3 mb-1">{line.slice(2)}</h2>
                           const linkMatch = line.match(/^- \[(.+?)\]\((.+?)\)$/)
-                          if (linkMatch) {
-                            return (
-                              <div key={li}>
-                                {"- "}
-                                <a href={linkMatch[2]} className="underline font-medium hover:opacity-75" onClick={() => setOpen(false)}>
-                                  {linkMatch[1]}
-                                </a>
-                              </div>
-                            )
-                          }
-                          return <div key={li} className={line === "" ? "h-2" : ""}>{line}</div>
+                          if (linkMatch) return (
+                            <div key={li} className="mt-0.5">{"– "}
+                              <a href={linkMatch[2]} className="underline font-medium hover:opacity-75" onClick={() => setOpen(false)}>{linkMatch[1]}</a>
+                            </div>
+                          )
+                          if (line === "") return <div key={li} className="h-2" />
+                          const formatted = line
+                            .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+                            .replace(/\*(.+?)\*/g, "<em>$1</em>")
+                          return <div key={li} dangerouslySetInnerHTML={{ __html: formatted }} />
                         })
                       : m.text}
                   </div>
