@@ -41,20 +41,33 @@ export default function AskWidget() {
     setInput("")
     setMessages((prev) => [...prev, { role: "user", text: q }])
     setLoading(true)
+    setMessages((prev) => [...prev, { role: "assistant", text: "" }])
     try {
       const res = await fetch("/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: q }),
       })
-      const data = await res.json()
-      const text = data.answer || (data.detail ? `${data.error}\n\n[${data.detail}]` : data.error) || "Jokin meni pieleen."
-      setMessages((prev) => [...prev, { role: "assistant", text }])
+      if (!res.ok) {
+        const data = await res.json()
+        const text = data.detail ? `${data.error}\n\n[${data.detail}]` : data.error || "Jokin meni pieleen."
+        setMessages((prev) => [...prev.slice(0, -1), { role: "assistant", text }])
+        return
+      }
+      const reader = res.body?.getReader()
+      const decoder = new TextDecoder()
+      if (!reader) throw new Error("No reader")
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        const chunk = decoder.decode(value, { stream: true })
+        setMessages((prev) => {
+          const last = prev[prev.length - 1]
+          return [...prev.slice(0, -1), { ...last, text: last.text + chunk }]
+        })
+      }
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", text: "Palvelussa on tilapäinen häiriö." },
-      ])
+      setMessages((prev) => [...prev.slice(0, -1), { role: "assistant", text: "Palvelussa on tilapäinen häiriö." }])
     } finally {
       setLoading(false)
     }

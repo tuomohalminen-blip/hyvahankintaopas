@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
     if (!question || typeof question !== "string" || question.trim().length < 3) {
       return NextResponse.json({ error: "Kirjoita kysymys." }, { status: 400 })
     }
-    if (question.length > 500) {
+    if (question.length > 1000) {
       return NextResponse.json({ error: "Kysymys on liian pitkä." }, { status: 400 })
     }
 
@@ -89,10 +89,7 @@ export async function POST(req: NextRequest) {
     const redisUrl = process.env.UPSTASH_REDIS_REST_URL?.replace(/^"+|"+$/g, "")
     const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN?.replace(/^"+|"+$/g, "")
     if (redisUrl && redisToken) {
-      const redis = new Redis({
-        url: redisUrl,
-        token: redisToken,
-      })
+      const redis = new Redis({ url: redisUrl, token: redisToken })
       const ip = getClientIp(req)
       const key = `ask:${ip}:${new Date().toISOString().slice(0, 10)}`
       const count = await redis.incr(key)
@@ -108,9 +105,9 @@ export async function POST(req: NextRequest) {
     const content = loadAllContent()
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-    const message = await client.messages.create({
+    const stream = client.messages.stream({
       model: "claude-sonnet-4-5",
-      max_tokens: 400,
+      max_tokens: 600,
       system: SYSTEM_PROMPT,
       messages: [
         {
@@ -120,10 +117,31 @@ export async function POST(req: NextRequest) {
       ],
     })
 
-    const answer =
-      message.content[0].type === "text" ? message.content[0].text : ""
+    const encoder = new TextEncoder()
+    const readable = new ReadableStream({
+      async start(controller) {
+        for await (const chunk of stream) {
+          if (
+            chunk.type === "content_block_delta" &&
+            chunk.delta.type === "text_delta"
+          ) {
+            controller.enqueue(encoder.encode(chunk.delta.text))
+          }
+        }
+        controller.close()
+      },
+      cancel() {
+        stream.abort()
+      },
+    })
 
-    return NextResponse.json({ answer })
+    return new Response(readable, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+      },
+    })
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err)
     console.error("Ask API error:", msg)
