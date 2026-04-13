@@ -12,6 +12,7 @@ export default function AskWidget() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
+  const [streaming, setStreaming] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -41,6 +42,7 @@ export default function AskWidget() {
     setInput("")
     setMessages((prev) => [...prev, { role: "user", text: q }])
     setLoading(true)
+    setStreaming(false)
     setMessages((prev) => [...prev, { role: "assistant", text: "" }])
     try {
       const res = await fetch("/api/ask", {
@@ -61,6 +63,7 @@ export default function AskWidget() {
         const { done, value } = await reader.read()
         if (done) break
         const chunk = decoder.decode(value, { stream: true })
+        setStreaming(true)
         setMessages((prev) => {
           const last = prev[prev.length - 1]
           return [...prev.slice(0, -1), { ...last, text: last.text + chunk }]
@@ -70,6 +73,7 @@ export default function AskWidget() {
       setMessages((prev) => [...prev.slice(0, -1), { role: "assistant", text: "Palvelussa on tilapäinen häiriö." }])
     } finally {
       setLoading(false)
+      setStreaming(false)
     }
   }
 
@@ -151,10 +155,16 @@ export default function AskWidget() {
                   </div>
                 </div>
               ))}
-              {loading && (
+              {loading && !streaming && (
                 <div className="flex justify-start">
-                  <div className="bg-[#E0F2F1] text-[#004D46] rounded-2xl rounded-tl-sm px-4 py-3">
-                    <span className="animate-pulse text-lg tracking-widest">···</span>
+                  <div className="bg-[#E0F2F1] text-[#004D46] rounded-2xl rounded-tl-sm px-4 py-3 max-w-[85%]">
+                    <div className="flex items-center gap-2 text-sm">
+                      <svg className="animate-spin h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                      </svg>
+                      <span>Käyn läpi oppaan sisältöä – vastaus alkaa hetken kuluttua…</span>
+                    </div>
                   </div>
                 </div>
               )}
