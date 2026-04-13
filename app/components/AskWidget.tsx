@@ -198,7 +198,10 @@ export default function AskWidget() {
                   Lähetä
                 </button>
               </div>
-              <p className="text-xs text-gray-400 mt-1.5 px-1">30 kysymystä päivässä · Vastaukset oppaan sisällöstä</p>
+              <p className="text-xs text-gray-400 mt-1.5 px-1">
+                30 kysymystä päivässä · Vastaukset oppaan sisällöstä · Jos haluat vastauksen ihmiseltä:{" "}
+                <a href="mailto:tuomo@meneva.fi" className="underline hover:text-gray-600">tuomo@meneva.fi</a>
+              </p>
             </div>
           </div>
         </div>
