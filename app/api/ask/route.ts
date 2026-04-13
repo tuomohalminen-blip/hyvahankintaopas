@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
     const message = await client.messages.create({
-      model: "claude-haiku-4-5",
+      model: "claude-3-5-haiku-20241022",
       max_tokens: 400,
       system: SYSTEM_PROMPT,
       messages: [
@@ -92,8 +92,9 @@ export async function POST(req: NextRequest) {
       message.content[0].type === "text" ? message.content[0].text : ""
 
     return NextResponse.json({ answer })
-  } catch (err) {
-    console.error("Ask API error:", err)
-    return NextResponse.json({ error: "Palvelussa on tilapäinen häiriö." }, { status: 500 })
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error("Ask API error:", msg)
+    return NextResponse.json({ error: "Palvelussa on tilapäinen häiriö.", detail: msg }, { status: 500 })
   }
 }
