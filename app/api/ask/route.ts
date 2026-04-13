@@ -112,30 +112,42 @@ export async function POST(req: NextRequest) {
     const writer = writable.getWriter()
 
     ;(async () => {
-      try {
-        const stream = await client.messages.create({
-          model: "claude-sonnet-4-5",
-          max_tokens: 600,
-          stream: true,
-          system: SYSTEM_PROMPT,
-          messages: [
-            {
-              role: "user",
-              content: `Oppaan sisältö:\n\n${content}\n\n---\n\nKysymys: ${question.trim()}`,
-            },
-          ],
-        })
-        for await (const chunk of stream) {
-          if (chunk.type === "content_block_delta" && chunk.delta.type === "text_delta") {
-            await writer.write(encoder.encode(chunk.delta.text))
+      const maxRetries = 3
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          const stream = await client.messages.create({
+            model: "claude-sonnet-4-5",
+            max_tokens: 600,
+            stream: true,
+            system: SYSTEM_PROMPT,
+            messages: [
+              {
+                role: "user",
+                content: `Oppaan sisältö:\n\n${content}\n\n---\n\nKysymys: ${question.trim()}`,
+              },
+            ],
+          })
+          for await (const chunk of stream) {
+            if (chunk.type === "content_block_delta" && chunk.delta.type === "text_delta") {
+              await writer.write(encoder.encode(chunk.delta.text))
+            }
           }
+          break
+        } catch (e: unknown) {
+          const msg = e instanceof Error ? e.message : String(e)
+          const isOverloaded = msg.includes("overloaded")
+          if (isOverloaded && attempt < maxRetries) {
+            await new Promise((r) => setTimeout(r, attempt * 2000))
+            continue
+          }
+          const friendlyMsg = isOverloaded
+            ? "Tekoälypalvelu on hetkellisesti ruuhkautunut. Kokeile hetken kuluttua uudelleen."
+            : "Palvelussa on tilapäinen häiriö. Kokeile hetken kuluttua uudelleen."
+          await writer.write(encoder.encode(friendlyMsg))
+          break
         }
-      } catch (e) {
-        const msg = e instanceof Error ? e.message : String(e)
-        await writer.write(encoder.encode(`\n\n[Virhe: ${msg}]`))
-      } finally {
-        await writer.close()
       }
+      await writer.close()
     })()
 
     return new Response(readable, {
