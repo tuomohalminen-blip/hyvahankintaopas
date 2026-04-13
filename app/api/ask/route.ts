@@ -56,10 +56,12 @@ export async function POST(req: NextRequest) {
     }
 
     // Rate limiting
-    if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    const redisUrl = process.env.UPSTASH_REDIS_REST_URL?.replace(/^"+|"+$/g, "")
+    const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN?.replace(/^"+|"+$/g, "")
+    if (redisUrl && redisToken) {
       const redis = new Redis({
-        url: process.env.UPSTASH_REDIS_REST_URL,
-        token: process.env.UPSTASH_REDIS_REST_TOKEN,
+        url: redisUrl,
+        token: redisToken,
       })
       const ip = getClientIp(req)
       const key = `ask:${ip}:${new Date().toISOString().slice(0, 10)}`
