@@ -112,11 +112,13 @@ export async function POST(req: NextRequest) {
     const writer = writable.getWriter()
 
     ;(async () => {
+      const models = ["claude-sonnet-4-5", "claude-haiku-4-5-20251001"]
       const maxRetries = 3
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        const model = attempt <= 2 ? models[0] : models[1]
         try {
           const stream = await client.messages.create({
-            model: "claude-sonnet-4-5",
+            model,
             max_tokens: 600,
             stream: true,
             system: SYSTEM_PROMPT,
