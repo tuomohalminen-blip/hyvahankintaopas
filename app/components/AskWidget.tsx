@@ -48,10 +48,8 @@ export default function AskWidget() {
         body: JSON.stringify({ question: q }),
       })
       const data = await res.json()
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", text: data.answer || data.error || "Jokin meni pieleen." },
-      ])
+      const text = data.answer || (data.detail ? `${data.error}\n\n[${data.detail}]` : data.error) || "Jokin meni pieleen."
+      setMessages((prev) => [...prev, { role: "assistant", text }])
     } catch {
       setMessages((prev) => [
         ...prev,
